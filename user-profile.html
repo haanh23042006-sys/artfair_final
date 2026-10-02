@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Quản Lý Cá Nhân - ARTFAIR User Dashboard</title>
+  <meta name="description" content="Trung tâm quản lý bản quyền đã mua, tiến độ đơn hàng Commission và Creator Studio tại ARTFAIR.">
+
+  <!-- Google Fonts: Oswald (Primary Headings & Titles) & Plus Jakarta Sans (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
+  <style>
+    .mobile-nav-drawer,
+    #mobileNavDrawer,
+    [class*="mobile-drawer"] {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      overflow: hidden !important;
+      pointer-events: none !important;
+    }
+
+    .artist-commission-status,
+    .commission-status-pill,
+    .status-badge-pill {
+      position: static !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      white-space: normal !important;
+      max-width: 130px !important;
+      text-align: center !important;
+      margin: 8px auto 0 auto !important;
+      font-size: 0.72rem !important;
+      line-height: 1.3 !important;
+      background: #ecfdf5 !important;
+      color: #059669 !important;
+      border: 1px solid #a7f3d0 !important;
+      padding: 4px 8px !important;
+      border-radius: 12px !important;
+      transform: none !important;
+    }
+
+    #followingArtistsGrid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+      gap: 24px !important;
+      align-items: stretch !important;
+    }
+
+    #followingArtistsGrid .booth-card {
+      background: #ffffff !important;
+      border-radius: 20px !important;
+      border: 1px solid #f0f0f0 !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: visible !important;
+      position: relative !important;
+    }
+
+    #followingArtistsGrid .booth-banner {
+      height: 95px !important;
+      width: 100% !important;
+      border-radius: 20px 20px 0 0 !important;
+      overflow: hidden !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }
+
+    #followingArtistsGrid .booth-banner img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+    }
+
+    #followingArtistsGrid .booth-avatar-box {
+      width: 72px !important;
+      height: 72px !important;
+      margin: -36px auto 0 auto !important;
+      position: relative !important;
+      z-index: 10 !important;
+    }
+
+    #followingArtistsGrid .booth-avatar {
+      width: 72px !important;
+      height: 72px !important;
+      border-radius: 50% !important;
+      border: 3.5px solid #ffffff !important;
+      object-fit: cover !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+      display: block !important;
+      background: #ffffff !important;
+    }
+
+    #followingArtistsGrid .booth-body {
+      padding: 12px 18px 18px 18px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      flex-grow: 1 !important;
+      text-align: center !important;
+    }
+
+    #followingArtistsGrid .booth-actions {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 8px !important;
+      width: 100% !important;
+      margin-top: auto !important;
+      padding-top: 14px !important;
+      box-sizing: border-box !important;
+    }
+
+    #followingArtistsGrid .booth-actions button:first-child {
+      flex: 1 !important;
+      width: auto !important;
+      height: 38px !important;
+      padding: 0 12px !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      border-radius: 10px !important;
+      white-space: nowrap !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+    }
+
+    #followingArtistsGrid .booth-actions button:last-child {
+      width: 38px !important;
+      height: 38px !important;
+      min-width: 38px !important;
+      flex: 0 0 38px !important;
+      border-radius: 10px !important;
+      border: 1px solid #fee2e2 !important;
+      background: #fff5f5 !important;
+      color: #ef4444 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      font-size: 0.85rem !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      transition: all 0.2s ease !important;
+    }
+
+    #commissionInboxList {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 20px !important;
+      margin-top: 16px !important;
+    }
+
+    #purchasedLicensesGrid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)) !important;
+      gap: 24px !important;
+      margin-top: 18px !important;
+      align-items: stretch !important;
+    }
+
+    #purchasedLicensesGrid > div {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 20px !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05) !important;
+      padding: 22px !important;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 20px !important;
+      align-items: stretch !important;
+      box-sizing: border-box !important;
+    }
+
+    #purchasedLicensesGrid img {
+      width: 140px !important;
+      min-width: 140px !important;
+      height: 100% !important;
+      min-height: 190px !important;
+      object-fit: cover !important;
+      border-radius: 14px !important;
+      border: 1px solid #f1f5f9 !important;
+      flex-shrink: 0 !important;
+      display: block !important;
+    }
+
+    #creatorStudioModalOverlay.modal-overlay,
+    #editProfileModalOverlay.modal-overlay {
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(15, 23, 42, 0.7) !important;
+      backdrop-filter: blur(6px) !important;
+      z-index: 999999 !important;
+      display: none;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 16px !important;
+      box-sizing: border-box !important;
+    }
+
+    #creatorStudioModalOverlay.active,
+    #editProfileModalOverlay.active {
+      display: flex !important;
+    }
+
+    .upload-dropzone {
+      border: 2px dashed #cbd5e1 !important;
+      border-radius: 14px !important;
+      padding: 24px !important;
+      text-align: center !important;
+      background: #f8fafc !important;
+      cursor: pointer !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+  </style>
+</head>
+<body class="user-dashboard-page">
+
+  <header class="site-header" id="siteHeader">
+    <div class="header-container single-row-header">
+      <a href="index.html" class="brand-logo" id="brandLogo">
+        <div class="logo-symbol">
+          <span class="logo-dot"></span>
+          <span class="logo-brush"><i class="fa-solid fa-palette"></i></span>
+        </div>
+        <div class="logo-text-group">
+          <span class="logo-title">ARTFAIR</span>
+          <span class="logo-tagline">HỘI CHỢ NGHỆ THUẬT MỞ</span>
+        </div>
+      </a>
+
+      <nav class="main-nav">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link"><i class="fa-solid fa-compass"></i> Chợ Phiên</a></li>
+          <li><a href="index.html#artist-booths" class="nav-link">Gian Hàng Nghệ Sĩ</a></li>
+          <li><a href="index.html#license-calculator" class="nav-link">Bảng Giá Bản Quyền</a></li>
+          <li><a href="#" class="nav-link active">Trang Cá Nhân</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-search-bar">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="dashSearchInput" placeholder="Tìm tác phẩm, bản quyền..." autocomplete="off">
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-action-btn" id="btnHeaderCart" title="Giỏ hàng bản quyền" onclick="openCartDrawer()">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="action-counter-badge" id="cartCountBadge">0</span>
+        </button>
+
+        <div class="user-auth-zone" id="userAuthZone">
+          <div class="logged-in-profile" id="loggedInProfile">
+            <div class="user-avatar-pill" id="userAvatarPill" onclick="toggleUserDropdown(event)" style="cursor: pointer;">
+              <img src="2e72c41b49afad2d08530b6a0475ba66.jpg" alt="Avatar" class="avatar-img" id="userAvatarImg">
+              <span class="user-name" id="userNameLabel">Hoàng My</span>
+              <i class="fa-solid fa-chevron-down arrow-down"></i>
+            </div>
+            <div class="user-dropdown-menu" id="userDropdownMenu">
+              <div class="dropdown-header">
+                <p class="dropdown-user-name" id="dropdownUserName">Hoàng My</p>
+                <p class="dropdown-user-role" id="dropdownUserRole">Chủ Shop POD & Collector</p>
+              </div>
+              <ul class="dropdown-list">
+                <li><a href="#" onclick="switchRoleView('collector')"><i class="fa-solid fa-bag-shopping"></i> Giao Diện Người Mua</a></li>
+                <li><a href="#" onclick="switchRoleView('artist')"><i class="fa-solid fa-palette"></i> Giao Diện Creator Studio</a></li>
+                <li class="divider"></li>
+                <li><a href="javascript:void(0)" id="btnLogout" class="text-danger" onclick="handleDashboardLogout(event)"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <button class="mobile-toggle-btn" id="mobileMenuToggle" aria-label="Mở menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Banner Top -->
+  <section class="dashboard-hero-header">
+    <div class="section-container">
+      <div class="dashboard-profile-card">
+        <div class="dash-avatar-col">
+          <img src="2e72c41b49afad2d08530b6a0475ba66.jpg" alt="User Avatar" id="dashUserAvatar" class="dash-avatar">
+        </div>
+
+        <div class="dash-info-col">
+          <div class="dash-name-row">
+            <h1 class="dash-user-name" id="dashUserName">Hoàng My (GenZ POD Shop)</h1>
+            <span class="dash-role-badge" id="dashRoleBadge">🛍️ Người Mua / POD Shop Owner</span>
+          </div>
+
+          <p class="dash-user-email" id="dashUserEmail">my.streetwear@gmail.com</p>
+          <p class="dash-user-bio" id="dashUserBio">"Sáng lập GenZ Streetwear Brand. Chuyên sưu tầm bản quyền hình in áo thun, poster decor và quà tặng nghệ thuật."</p>
+        </div>
+
+        <div class="dash-role-switcher-col">
+          <div class="role-switch-box">
+            <span class="switch-title"><i class="fa-solid fa-sliders"></i> Chế Độ Hiển Thị:</span>
+            <div class="role-toggle-btn-group">
+              <button class="btn btn-sm btn-outline active" id="btnRoleBuyer" onclick="switchRoleView('collector')">
+                <i class="fa-solid fa-bag-shopping"></i> Người Mua (Buyer)
+              </button>
+              <button class="btn btn-sm btn-outline" id="btnRoleCreator" onclick="switchRoleView('artist')">
+                <i class="fa-solid fa-palette"></i> Người Sáng Tạo (Creator)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard Body -->
+  <main class="dashboard-main-content">
+    <div class="section-container">
+
+      <!-- VIEW A: BUYER DASHBOARD -->
+      <div class="dashboard-view-mode active" id="viewBuyerDashboard">
+        <div class="dash-tabs-nav">
+          <button class="dash-tab-btn active" data-buyertab="following" onclick="switchBuyerTab('following')">
+            <i class="fa-solid fa-user-check"></i> Tác Giả Đang Theo Dõi (<span id="countFollowing">0</span>)
+          </button>
+          
+          <button class="dash-tab-btn" data-buyertab="tracker" onclick="switchBuyerTab('tracker')">
+            <i class="fa-solid fa-clock-rotate-left"></i> Tiến Độ Commission (<span id="countLiveCommissions">0</span>)
+          </button>
+          
+          <button class="dash-tab-btn" data-buyertab="collector" onclick="switchBuyerTab('collector')">
+            <i class="fa-solid fa-file-contract"></i> Kho Bản Quyền Đã Mua (<span id="countLicenses">0</span>)
+          </button>
+        </div>
+
+        <div class="buyer-tab-pane active" id="paneBuyerFollowing">
+          <div class="section-sub-header">
+            <h3>Danh Sách Tác Giả Bạn Đang Theo Dõi</h3>
+          </div>
+          <div class="following-artists-grid" id="followingArtistsGrid"></div>
+        </div>
+
+        <div class="buyer-tab-pane" id="paneBuyerTracker">
+          <div class="section-sub-header">
+            <h3>Theo Dõi Tiến Độ Đơn Hàng & Commission</h3>
+          </div>
+          <div class="live-tracker-list" id="liveTrackerList"></div>
+        </div>
+
+        <div class="buyer-tab-pane" id="paneBuyerCollector">
+          <div class="section-sub-header">
+            <h3>Kho Tác Phẩm Đã Sở Hữu Bản Quyền</h3>
+          </div>
+          <div class="purchased-licenses-grid" id="purchasedLicensesGrid"></div>
+        </div>
+      </div>
+
+      <!-- VIEW B: CREATOR DASHBOARD -->
+      <div class="dashboard-view-mode" id="viewCreatorDashboard">
+        <div class="creator-toolbar-card">
+          <div class="toolbar-status-group">
+            <span class="status-label">Trạng Thái Nhận Đơn Sáng Tác:</span>
+            <div class="status-toggle-container">
+              <button class="status-toggle-btn active" id="btnStatusAccepting" onclick="setCreatorActiveStatus(true)">
+                <i class="fa-solid fa-circle text-mint"></i> 🟢 Còn Nhận Đơn Commission
+              </button>
+              <button class="status-toggle-btn" id="btnStatusBusy" onclick="setCreatorActiveStatus(false)">
+                <i class="fa-solid fa-circle text-danger"></i> 🔴 Đã Kín Lịch Mùa Này
+              </button>
+            </div>
+          </div>
+
+          <div class="toolbar-actions-group">
+            <button class="btn btn-outline btn-sm" onclick="openEditProfileModal()">
+              <i class="fa-solid fa-pen-to-square"></i> Sửa Thông Tin
+            </button>
+            <button class="btn btn-primary btn-sm pulse-glow" onclick="openCreatorStudioModal()">
+              <i class="fa-solid fa-cloud-arrow-up"></i> + Đăng Tranh Mới
+            </button>
+          </div>
+        </div>
+
+        <div class="creator-metrics-bar" style="display:flex; gap:16px; margin: 18px 0;">
+          <div class="creator-metric-card" style="flex:1; background:#fff; padding:16px; border-radius:14px; border:1px solid #e2e8f0;">
+            <span class="metric-title" style="font-size:0.8rem; color:#64748b;">Tổng Doanh Thu</span>
+            <strong class="metric-val text-primary" id="metricTotalRevenue" style="display:block; font-size:1.25rem; color:#ef4444; margin-top:4px;">0 VNĐ</strong>
+            <span class="metric-sub" style="font-size:0.75rem; color:#94a3b8;">Chưa phát sinh giao dịch</span>
+          </div>
+          <div class="creator-metric-card" style="flex:1; background:#fff; padding:16px; border-radius:14px; border:1px solid #e2e8f0;">
+            <span class="metric-title" style="font-size:0.8rem; color:#64748b;">Tác Phẩm Đang Đăng Bán</span>
+            <strong class="metric-val" id="metricArtworksCount" style="display:block; font-size:1.25rem; color:#0f172a; margin-top:4px;">0 Tác Phẩm</strong>
+            <span class="metric-sub" id="metricArtworksSub" style="font-size:0.75rem; color:#94a3b8;">Chưa có tác phẩm</span>
+          </div>
+          <div class="creator-metric-card" style="flex:1; background:#fff; padding:16px; border-radius:14px; border:1px solid #e2e8f0;">
+            <span class="metric-title" style="font-size:0.8rem; color:#64748b;">Yêu Cầu Commission</span>
+            <strong class="metric-val text-warning" id="metricPendingCommissions" style="display:block; font-size:1.25rem; color:#f59e0b; margin-top:4px;">0 Đơn Mới</strong>
+            <span class="metric-sub" id="metricPendingSub" style="font-size:0.75rem; color:#94a3b8;">Hộp thư trống</span>
+          </div>
+        </div>
+
+        <div class="dash-tabs-nav">
+          <button class="dash-tab-btn active" data-creatortab="inbox" onclick="switchCreatorTab('inbox')">
+            <i class="fa-solid fa-inbox"></i> Hộp Thư Commission (<span id="countCreatorInbox">0</span>)
+          </button>
+          <button class="dash-tab-btn" data-creatortab="myartworks" onclick="switchCreatorTab('myartworks')">
+            <i class="fa-solid fa-images"></i> Quản Lý Tác Phẩm (<span id="countCreatorArtworks">0</span>)
+          </button>
+        </div>
+
+        <div class="creator-tab-pane active" id="paneCreatorInbox">
+          <div class="section-sub-header">
+            <h3>Hộp Thư Quản Lý Yêu Cầu Commission</h3>
+          </div>
+          <div class="commission-inbox-list" id="commissionInboxList"></div>
+        </div>
+
+        <div class="creator-tab-pane" id="paneCreatorMyArtworks">
+          <div class="section-sub-header">
+            <h3>Kho Tác Phẩm Đã Đăng Bán (150.000đ - 5.500.000đ)</h3>
+          </div>
+          <div class="artwork-grid-container" id="creatorArtworksGrid"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL: CERTIFICATE -->
+  <div class="modal-overlay" id="certificateModalOverlay">
+    <div class="modal-container certificate-modal-box">
+      <button class="modal-close-btn" onclick="closeCertificateModal()">&times;</button>
+      <div class="certificate-paper-frame" id="certificatePaper">
+        <div class="cert-border-gold">
+          <div class="cert-header">
+            <h2>GIẤY CHỨNG NHẬN BẢN QUYỀN THƯƠNG MẠI</h2>
+          </div>
+          <div class="cert-body">
+            <p>Bên sở hữu: <strong id="certLicenseOwner">Hoàng My</strong></p>
+            <div class="cert-artwork-summary">
+              <img src="" id="certArtworkImg" style="width:80px; height:80px; object-fit:cover; border-radius:10px;">
+              <div>
+                <h3 id="certArtworkTitle">Tên Tác Phẩm</h3>
+                <p>Tác giả: <strong id="certArtistName">Kiệt Nguyễn</strong></p>
+                <p>Gói: <strong id="certLicenseTier" class="text-primary">Thương Mại POD Mở Rộng (1.400.000 VNĐ)</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ĐĂNG TRANH MỚI -->
+  <div class="modal-overlay" id="creatorStudioModalOverlay">
+    <div class="modal-container auth-modal-box max-w-650">
+      <button class="modal-close-btn" onclick="closeCreatorStudioModal()">&times;</button>
+      <div class="modal-header-block">
+        <h3><i class="fa-solid fa-cloud-arrow-up text-primary"></i> Đăng Tranh / Artwork Mới</h3>
+      </div>
+
+      <form id="formNewArtwork" onsubmit="handleNewArtworkSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Tên Tác Phẩm / Tiêu Đề:</label>
+          <input type="text" id="newArtTitle" class="form-input" placeholder="Ví dụ: Nàng Thơ Bên Khung Cửa Sổ" required>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Danh Mục:</label>
+            <select id="newArtCategory" class="custom-select form-input" required>
+              <option value="tshirt">Thiết kế áo thun / Merch POD</option>
+              <option value="illustration">Minh họa nghệ thuật</option>
+              <option value="logo">Logo & Thương hiệu</option>
+              <option value="decor">Trang trí Decor & Canvas</option>
+              <option value="typography">Font chữ nghệ thuật</option>
+              <option value="digital">Digital Art & Concept</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Giá Bản Quyền Cá Nhân (VNĐ):</label>
+            <input type="number" id="newArtPriceBase" class="form-input" value="150000" min="50000" step="10000" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mô Tả:</label>
+          <textarea id="newArtDesc" class="form-input form-textarea" rows="3" placeholder="Mô tả ý tưởng tác phẩm..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tệp Tác Phẩm:</label>
+          <div class="upload-dropzone" onclick="document.getElementById('newArtFileInput').click()">
+            <i class="fa-solid fa-file-image"></i>
+            <p>Chọn tệp tác phẩm (.PNG / .PSD 300DPI)</p>
+            <input type="file" id="newArtFileInput" style="display:none;" accept="image/*">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 btn-lg">
+          <i class="fa-solid fa-paper-plane"></i> Đăng Tác Phẩm
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: SỬA HỒ SƠ -->
+  <div class="modal-overlay" id="editProfileModalOverlay">
+    <div class="modal-container auth-modal-box">
+      <button class="modal-close-btn" onclick="closeEditProfileModal()">&times;</button>
+      <h3>Sửa Thông Tin Cá Nhân</h3>
+      <form id="formEditProfile" onsubmit="handleEditProfileSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Họ Tên / Bút Danh:</label>
+          <input type="text" id="editName" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tiểu Sử / Bio:</label>
+          <textarea id="editBio" class="form-input form-textarea" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 btn-lg">Lưu Thay Đổi</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CART DRAWER -->
+  <div class="cart-drawer-overlay" id="cartDrawerOverlay">
+    <div class="cart-drawer-panel">
+      <div class="cart-drawer-header">
+        <h3><i class="fa-solid fa-bag-shopping text-primary"></i> Giỏ Hàng Bản Quyền</h3>
+        <button class="drawer-close-btn" onclick="closeCartDrawer()">&times;</button>
+      </div>
+      <div class="cart-drawer-body" id="cartItemsContainer"></div>
+      <div class="cart-drawer-footer">
+        <div class="cart-totals-sheet">
+          <div class="total-line grand-total-line">
+            <strong>Tổng thanh toán:</strong>
+            <strong class="grand-price" id="cartGrandTotal">0 VNĐ</strong>
+          </div>
+        </div>
+        <button class="btn btn-primary w-100 btn-lg" onclick="alert('Đã hoàn tất thanh toán!')">Thanh Toán</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="artists-data.js"></script>
+  <script src="user-profile.js"></script>
+
+  <script>
+    function getUserSession() {
+      const isLoggedIn = localStorage.getItem('artfair_is_logged_in') === 'true';
+      if (!isLoggedIn) {
+        alert('Vui lòng đăng nhập!');
+        window.location.replace('index.html');
+        return null;
+      }
+      let user = {};
+      try { user = JSON.parse(localStorage.getItem('artfair_user') || '{}'); } catch(e){}
+      const rawName = user.name || 'Thành Viên';
+      const cleanName = rawName.replace(/\s*\(.*\)/, '').trim();
+      let email = user.email || cleanName.toLowerCase().replace(/[^a-z0-9]/g, '') + '@gmail.com';
+      const role = localStorage.getItem('artfair_active_role') || user.role || 'artist';
+      return { cleanName, email, role };
+    }
+
+    function getUserKey(baseKey) {
+      const user = getUserSession();
+      if (!user || !user.email) return baseKey;
+      return `${baseKey}_${user.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+    }
+
+    function switchRoleView(role) {
+      const user = getUserSession();
+      if (!user) return;
+      const isArtist = role === 'artist';
+      localStorage.setItem('artfair_active_role', role);
+
+      document.getElementById('userNameLabel').textContent = isArtist ? `${user.cleanName} (Artist)` : `${user.cleanName} (Collector)`;
+      document.getElementById('dropdownUserName').textContent = user.cleanName;
+      document.getElementById('dropdownUserRole').textContent = isArtist ? 'Pro Creator Studio • Artist' : 'Chủ Shop POD & Collector';
+
+      document.getElementById('dashUserName').textContent = `${user.cleanName.toUpperCase()} (${isArtist ? 'CREATOR STUDIO' : 'GENZ POD SHOP'})`;
+      const roleBadge = document.getElementById('dashRoleBadge');
+      roleBadge.textContent = isArtist ? '🎨 Người Sáng Tạo / Pro Creator Studio' : '🛍️ Người Mua / POD Shop Owner';
+
+      document.getElementById('viewBuyerDashboard').style.display = isArtist ? 'none' : 'block';
+      document.getElementById('viewCreatorDashboard').style.display = isArtist ? 'block' : 'none';
+      document.getElementById('btnRoleBuyer').classList.toggle('active', !isArtist);
+      document.getElementById('btnRoleCreator').classList.toggle('active', isArtist);
+
+      if (isArtist) {
+        switchCreatorTab('inbox');
+        updateCreatorMetrics();
+        loadCreatorActiveStatus();
+      } else {
+        renderPurchasedLicenses();
+        renderLiveCommissionTracker();
+        renderFollowingArtists();
+      }
+    }
+
+    function switchCreatorTab(tabKey) {
+      document.querySelectorAll('[data-creatortab]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-creatortab') === tabKey);
+      });
+      document.getElementById('paneCreatorInbox').style.display = tabKey === 'inbox' ? 'block' : 'none';
+      document.getElementById('paneCreatorMyArtworks').style.display = tabKey === 'myartworks' ? 'block' : 'none';
+      if (tabKey === 'inbox') renderCreatorInbox();
+      if (tabKey === 'myartworks') renderCreatorArtworks();
+      updateCreatorMetrics();
+    }
+
+    function renderCreatorArtworks() {
+      const grid = document.getElementById('creatorArtworksGrid');
+      if (!grid) return;
+      const arts = JSON.parse(localStorage.getItem(getUserKey('artfair_artist_artworks')) || '[]');
+      if (arts.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#64748b; padding: 30px;">Chưa đăng tác phẩm nào.</p>`;
+        return;
+      }
+      grid.innerHTML = arts.map((a, idx) => `
+        <div class="creator-art-card" style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; overflow:hidden; padding:12px;">
+          <img src="${a.img}" style="width:100%; height:160px; object-fit:cover; border-radius:10px;">
+          <h4 style="margin:8px 0 4px 0;">${a.title}</h4>
+          <strong style="color:#ef4444;">${(Number(a.price) || 150000).toLocaleString('vi-VN')} VNĐ</strong>
+          <button onclick="deleteArtwork(${idx})" style="display:block; margin-top:8px; border:none; background:#fee2e2; color:#ef4444; padding:6px 12px; border-radius:8px; cursor:pointer;">Xóa</button>
+        </div>
+      `).join('');
+    }
+
+    function deleteArtwork(idx) {
+      const key = getUserKey('artfair_artist_artworks');
+      let arts = JSON.parse(localStorage.getItem(key) || '[]');
+      arts.splice(idx, 1);
+      localStorage.setItem(key, JSON.stringify(arts));
+      renderCreatorArtworks();
+      updateCreatorMetrics();
+    }
+
+    function renderCreatorInbox() {
+      const inboxList = document.getElementById('commissionInboxList');
+      if (!inboxList) return;
+      const user = getUserSession();
+      const key = `artfair_creator_inbox_${user.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      const inboxData = JSON.parse(localStorage.getItem(key) || '[]');
+
+      if (inboxData.length === 0) {
+        inboxList.innerHTML = `<p style="text-align:center; color:#64748b; padding:30px;">Hộp thư commission trống.</p>`;
+        return;
+      }
+
+      inboxList.innerHTML = inboxData.map((item, idx) => `
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; margin-bottom:12px;">
+          <h4>${item.title} (${item.id})</h4>
+          <p>Khách hàng: <strong>${item.client}</strong> • Ngân sách: <strong style="color:#ef4444;">${item.budget}</strong></p>
+          <p style="font-style:italic; color:#64748b;">"${item.desc || item.brief}"</p>
+          <button onclick="alert('Đã nhận đơn!')" class="btn btn-primary btn-sm">Nhận Vẽ</button>
+          <button onclick="rejectCommissionInbox(${idx})" class="btn btn-outline btn-sm">Từ Chối</button>
+        </div>
+      `).join('');
+    }
+
+    function rejectCommissionInbox(idx) {
+      const user = getUserSession();
+      const key = `artfair_creator_inbox_${user.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      let inboxData = JSON.parse(localStorage.getItem(key) || '[]');
+      inboxData.splice(idx, 1);
+      localStorage.setItem(key, JSON.stringify(inboxData));
+      renderCreatorInbox();
+      updateCreatorMetrics();
+    }
+
+    function updateCreatorMetrics() {
+      const arts = JSON.parse(localStorage.getItem(getUserKey('artfair_artist_artworks')) || '[]');
+      const user = getUserSession();
+      const key = `artfair_creator_inbox_${user.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      const inbox = JSON.parse(localStorage.getItem(key) || '[]');
+
+      const revEl = document.getElementById('metricTotalRevenue');
+      if (revEl) revEl.textContent = '0 VNĐ';
+
+      const artCountEl = document.getElementById('metricArtworksCount');
+      if (artCountEl) artCountEl.textContent = `${arts.length} Tác Phẩm`;
+
+      const pendingEl = document.getElementById('metricPendingCommissions');
+      if (pendingEl) pendingEl.textContent = `${inbox.length} Đơn Mới`;
+
+      const countInboxTab = document.getElementById('countCreatorInbox');
+      if (countInboxTab) countInboxTab.textContent = inbox.length;
+
+      const countArtTab = document.getElementById('countCreatorArtworks');
+      if (countArtTab) countArtTab.textContent = arts.length;
+    }
+
+    function switchBuyerTab(tabKey) {
+      document.querySelectorAll('[data-buyertab]').forEach(b => b.classList.toggle('active', b.getAttribute('data-buyertab') === tabKey));
+      document.getElementById('paneBuyerFollowing').style.display = tabKey === 'following' ? 'block' : 'none';
+      document.getElementById('paneBuyerTracker').style.display = tabKey === 'tracker' ? 'block' : 'none';
+      document.getElementById('paneBuyerCollector').style.display = tabKey === 'collector' ? 'block' : 'none';
+      if (tabKey === 'following') renderFollowingArtists();
+      if (tabKey === 'tracker') renderLiveCommissionTracker();
+      if (tabKey === 'collector') renderPurchasedLicenses();
+    }
+
+    function renderPurchasedLicenses() {
+      const grid = document.getElementById('purchasedLicensesGrid');
+      if (!grid) return;
+      const licenses = JSON.parse(localStorage.getItem(getUserKey('artfair_purchased_licenses')) || '[]');
+      document.getElementById('countLicenses').textContent = licenses.length;
+
+      if (licenses.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#64748b; padding:30px;">Chưa sở hữu bản quyền nào.</p>`;
+        return;
+      }
+
+      grid.innerHTML = licenses.map(item => `
+        <div class="purchased-license-card">
+          <img src="${item.img}" alt="${item.title}">
+          <div>
+            <span>${item.code}</span>
+            <h4>${item.title}</h4>
+            <p>Tác giả: <strong>${item.artist}</strong></p>
+            <p>Gói: <strong>${item.tier}</strong></p>
+            <button class="btn btn-primary btn-sm" onclick="alert('Bắt đầu tải file gốc 300 DPI!')">Tải File Gốc</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderLiveCommissionTracker() {
+      const trackerList = document.getElementById('liveTrackerList');
+      if (!trackerList) return;
+      const user = getUserSession();
+      const key = `artfair_commissions_${user.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      const comms = JSON.parse(localStorage.getItem(key) || '[]');
+      document.getElementById('countLiveCommissions').textContent = comms.length;
+
+      if (comms.length === 0) {
+        trackerList.innerHTML = `<p style="text-align:center; color:#64748b; padding:30px;">Chưa gửi brief Commission nào.</p>`;
+        return;
+      }
+
+      trackerList.innerHTML = comms.map(item => `
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; margin-bottom:12px;">
+          <h4>${item.title} (${item.id})</h4>
+          <p>Nghệ sĩ: <strong>${item.artist}</strong> • Ngân sách: <strong style="color:#ef4444;">${item.budget}</strong></p>
+          <p style="font-style:italic; color:#64748b;">"${item.desc || item.brief}"</p>
+        </div>
+      `).join('');
+    }
+
+    function renderFollowingArtists() {
+      const grid = document.getElementById('followingArtistsGrid');
+      if (!grid) return;
+      const user = getUserSession();
+      const key = `artfair_following_artists_${user.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      const following = JSON.parse(localStorage.getItem(key) || '[]');
+      document.getElementById('countFollowing').textContent = following.length;
+
+      if (following.length === 0) {
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:#64748b; padding:30px;">Chưa theo dõi nghệ sĩ nào.</p>`;
+        return;
+      }
+
+      grid.innerHTML = following.map((item, idx) => `
+        <div style="background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:16px; text-align:center;">
+          <img src="${item.avatar}" style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
+          <h4 style="margin:6px 0;">${item.name}</h4>
+          <p style="font-size:0.8rem; color:#64748b;">${item.role}</p>
+          <button onclick="unfollowArtistAction(${idx})" style="border:none; background:#fee2e2; color:#ef4444; border-radius:8px; padding:6px 12px; cursor:pointer;">Bỏ theo dõi</button>
+        </div>
+      `).join('');
+    }
+
+    function unfollowArtistAction(idx) {
+      const user = getUserSession();
+      const key = `artfair_following_artists_${user.email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      let following = JSON.parse(localStorage.getItem(key) || '[]');
+      following.splice(idx, 1);
+      localStorage.setItem(key, JSON.stringify(following));
+      renderFollowingArtists();
+    }
+
+    let uploadedImageBase64 = '';
+    function openCreatorStudioModal() {
+      document.getElementById('creatorStudioModalOverlay').classList.add('active');
+      const inp = document.getElementById('newArtFileInput');
+      if (inp) {
+        inp.onchange = function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const r = new FileReader();
+            r.onload = function(evt) {
+              uploadedImageBase64 = evt.target.result;
+            };
+            r.readAsDataURL(file);
+          }
+        };
+      }
+    }
+
+    function closeCreatorStudioModal() {
+      document.getElementById('creatorStudioModalOverlay').classList.remove('active');
+    }
+
+    function handleNewArtworkSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const title = document.getElementById('newArtTitle')?.value.trim();
+      const category = document.getElementById('newArtCategory')?.value;
+      const price = document.getElementById('newArtPriceBase')?.value;
+      const desc = document.getElementById('newArtDesc')?.value.trim();
+      const img = uploadedImageBase64 || '45fbff086b31157aa2e23b94f086bd06.jpg';
+
+      if (!title) { alert('Vui lòng nhập tên tác phẩm!'); return; }
+
+      const key = getUserKey('artfair_artist_artworks');
+      let arts = JSON.parse(localStorage.getItem(key) || '[]');
+      arts.unshift({ id: 'ART-' + Date.now(), title, category, price, desc, img, date: new Date().toLocaleDateString('vi-VN') });
+      localStorage.setItem(key, JSON.stringify(arts));
+
+      closeCreatorStudioModal();
+      document.getElementById('formNewArtwork').reset();
+      uploadedImageBase64 = '';
+      switchCreatorTab('myartworks');
+      alert(`🎉 Đã đăng tác phẩm "${title}" thành công!`);
+    }
+
+  function openEditProfileModal() {
+      const modal = document.getElementById('editProfileModalOverlay');
+      if (!modal) return;
+      const user = getUserSession();
+      const nameInput = document.getElementById('editName');
+      const bioInput = document.getElementById('editBio');
+      const currentBio = document.getElementById('dashUserBio')?.textContent || '';
+      
+      if (nameInput && user) nameInput.value = user.cleanName;
+      if (bioInput) bioInput.value = currentBio.replace(/^"|"$/g, '').trim();
+      
+      modal.classList.add('active');
+      modal.style.display = 'flex';
+    }
+
+    function closeEditProfileModal() {
+      const modal = document.getElementById('editProfileModalOverlay');
+      if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+      }
+    }
+
+    function handleEditProfileSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      const newName = document.getElementById('editName')?.value.trim();
+      const newBio = document.getElementById('editBio')?.value.trim();
+      if (!newName) { alert('Vui lòng nhập họ tên!'); return; }
+
+      // 1. Cập nhật thông tin vào đối tượng user trong localStorage
+      let user = {};
+      try { user = JSON.parse(localStorage.getItem('artfair_user') || '{}'); } catch(err){}
+      user.name = newName;
+      if (newBio) user.bio = newBio;
+      localStorage.setItem('artfair_user', JSON.stringify(user));
+
+      // 2. Lưu riêng bio theo vai trò và Gmail để không bị mất khi chuyển đổi chế độ
+      const activeRole = localStorage.getItem('artfair_active_role') || 'collector';
+      if (newBio) {
+        localStorage.setItem(getUserKey('artfair_custom_bio_' + activeRole), newBio);
+      }
+
+      // 3. Cập nhật ngay lập tức lên giao diện màn hình
+      const dashNameEl = document.getElementById('dashUserName');
+      const dashBioEl = document.getElementById('dashUserBio');
+      const userNameLbl = document.getElementById('userNameLabel');
+      const dropName = document.getElementById('dropdownUserName');
+
+      if (dashNameEl) dashNameEl.textContent = `${newName.toUpperCase()} (${activeRole === 'artist' ? 'CREATOR STUDIO' : 'GENZ POD SHOP'})`;
+      if (dashBioEl) dashBioEl.textContent = `"${newBio}"`;
+      if (userNameLbl) userNameLbl.textContent = newName;
+      if (dropName) dropName.textContent = newName;
+
+      closeEditProfileModal();
+      alert('🎉 Đã cập nhật thành công thông tin hồ sơ và tiểu sử!');
+    }
+
+    function toggleUserDropdown(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      const menu = document.getElementById('userDropdownMenu');
+      if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function handleDashboardLogout(e) {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      localStorage.removeItem('artfair_is_logged_in');
+      localStorage.removeItem('artfair_user');
+      localStorage.removeItem('artfair_active_role');
+      window.location.replace('index.html');
+    }
+
+    function setCreatorActiveStatus(isAccepting) {
+      document.getElementById('btnStatusAccepting')?.classList.toggle('active', isAccepting);
+      document.getElementById('btnStatusBusy')?.classList.toggle('active', !isAccepting);
+      localStorage.setItem(getUserKey('artfair_creator_status'), isAccepting ? 'accepting' : 'busy');
+    }
+
+    function loadCreatorActiveStatus() {
+      const isAccepting = localStorage.getItem(getUserKey('artfair_creator_status')) !== 'busy';
+      document.getElementById('btnStatusAccepting')?.classList.toggle('active', isAccepting);
+      document.getElementById('btnStatusBusy')?.classList.toggle('active', !isAccepting);
+    }
+
+    function openCartDrawer() {
+      document.getElementById('cartDrawerOverlay').style.display = 'block';
+    }
+    function closeCartDrawer() {
+      document.getElementById('cartDrawerOverlay').style.display = 'none';
+    }
+    function closeCertificateModal() {
+      document.getElementById('certificateModalOverlay').classList.remove('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = getUserSession();
+      if (user) switchRoleView(user.role);
+    });
+  </script>
+</body>
+</html>
